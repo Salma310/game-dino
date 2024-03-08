@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dino Game</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <style>
+        .freeze {
+            transition: 0.2s;
+        }
+    </style>
+</head>
+<body>
+    <h2>Dino Run</h2>
+    <h3>Score : <span id="score">0</span></h3>
+    <div id="board" style="background-position: 0;">
+        <div id="area">
+            <div id="dino"></div>
+            <div id="box" style="margin-left: 600px"></div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        var isMoving = true;
+        var score = 0;
+
+        function resetGame() {
+            isMoving = true;
+            score = 0;
+            document.getElementById('score').innerHTML = score;
+            document.getElementById('dino').style.marginTop = "170px";
+            document.getElementById('dino').setAttribute('class', '');
+            document.getElementById('box').style.marginLeft = "600px";
+            setBackgroundMoving();
+            setBoxMoving();
+        }
+
+        function setBackgroundMoving() {
+            if (isMoving) {
+                var bg = document.getElementById('board');
+                bg.style.backgroundPosition = (parseInt(bg.style.backgroundPosition.replace('px', '')) - 1) + 'px';
+
+                score++;
+                document.getElementById('score').innerHTML = score;
+
+                requestAnimationFrame(setBackgroundMoving);
+            }
+        }
+
+        setBackgroundMoving();
+
+        function setBoxMoving() {
+            var box = document.getElementById('box');
+            var dino = document.getElementById('dino');
+
+            box.style.marginLeft = (parseInt(box.style.marginLeft.replace('px', '')) - 1) + 'px';
+
+            if (parseInt(box.style.marginLeft.replace('px', '')) < -100) {
+                box.style.marginLeft = "600px";
+            }
+
+            if (
+                dino.offsetTop + 50 >= box.offsetTop &&
+                dino.offsetLeft + 50 >= box.offsetLeft &&
+                dino.offsetTop <= box.offsetTop + 50 &&
+                dino.offsetLeft <= box.offsetLeft + 50
+            ) {
+                alert('GAME OVER, Score Anda: ' + score);
+                isMoving = false;
+                setTimeout(resetGame, 1000); // Menjalankan resetGame setelah 1 detik
+            } else {
+                requestAnimationFrame(setBoxMoving);
+            }
+        }
+
+        setBoxMoving();
+
+        window.addEventListener('keyup', function (e) {
+            if (e.keyCode == 32) {
+                document.getElementById('dino').style.marginTop = "70px";
+                document.getElementById('dino').setAttribute('class', 'freeze');
+                setTimeout(function () {
+                    document.getElementById('dino').style.marginTop = "170px";
+                    document.getElementById('dino').setAttribute('class', '');
+                }, 900);
+            }
+        });
+    </script>
+</body>
+</html>
